@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Tamalazo – Tamales Cubanos Auténticos Miami</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Libre+Baskerville:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+:root{
+  --cream:#F2E8D9;
+  --dark:#1C0E04;
+  --brown:#2A1506;
+  --gold:#C8922A;
+  --gold-light:#E8B84B;
+  --red:#B5281A;
+  --text:#2C1A06;
+  --muted:#7A6245;
+  --border:#D4B896;
+}
+*{margin:0;padding:0;box-sizing:border-box;max-width:100%;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--dark);color:var(--cream);font-family:'DM Sans',sans-serif;overflow-x:hidden;width:100%;}
+
+/* ── TICKER ── */
+.ticker-wrap{background:var(--red);overflow:hidden;white-space:nowrap;padding:.55rem 0;position:relative;z-index:20;width:100%;}
+.ticker-track{display:inline-flex;animation:ticker 22s linear infinite;}
+.ticker-track span{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.9);padding:0 2rem;}
+.ticker-track .dot{color:rgba(255,255,255,.5);padding:0 .5rem;}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── NAV ── */
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1.3rem 1.5rem;border-bottom:1px solid rgba(200,146,42,.2);position:sticky;top:0;z-index:100;background:rgba(28,14,4,.95);backdrop-filter:blur(8px);width:100%;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light);letter-spacing:.02em;flex-shrink:0;}
+.nav-right{display:flex;align-items:center;gap:1.5rem;flex-shrink:0;}
+.nav-right a{color:rgba(242,232,217,.6);text-decoration:none;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-right a:hover{color:var(--gold-light);}
+@media(max-width:640px){.nav-right a{display:none;}.nav{padding:1rem 1.2rem;}}
+.cart-btn{background:var(--gold);color:var(--dark);border:none;padding:.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:.4rem;}
+.cart-btn:hover{background:var(--gold-light);}
+.cart-count{background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.58rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 1.5rem 4rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 70% at 50% 50%,#3D1A08 0%,var(--dark) 70%);width:100%;}
+.hero-circles{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.hero-circles::before,.hero-circles::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(200,146,42,.12);}
+.hero-circles::before{width:min(90vw,600px);height:min(90vw,600px);}
+.hero-circles::after{width:min(65vw,440px);height:min(65vw,440px);}
+.hero-circle-inner{width:min(40vw,270px);height:min(40vw,270px);border-radius:50%;border:1px dashed rgba(200,146,42,.2);position:absolute;}
+.hero-eyebrow{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(232,184,75,.7);margin-bottom:1.5rem;padding:0 .5rem;white-space:normal;word-break:break-word;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,10vw,5.5rem);font-weight:900;line-height:.95;color:var(--cream);margin-bottom:.2em;}
+.hero h1 em{font-style:italic;color:var(--gold-light);display:block;}
+.hero-sub{font-family:'Libre Baskerville',serif;font-style:italic;font-size:.95rem;color:rgba(242,232,217,.55);margin-bottom:2rem;line-height:1.6;}
+.pickup-notice{background:rgba(181,40,26,.85);border-left:3px solid var(--gold-light);padding:.7rem 1.3rem;margin-bottom:2rem;font-size:.78rem;line-height:1.6;max-width:100%;text-align:left;}
+.pickup-notice strong{color:var(--gold-light);display:block;margin-bottom:.1rem;}
+.pickup-notice a{color:var(--gold-light);text-decoration:underline;}
+.hero-btns{display:flex;flex-direction:column;gap:.8rem;width:100%;max-width:320px;}
+.btn-primary{background:var(--red);color:#fff;border:none;padding:1rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:background .2s;text-decoration:none;display:block;text-align:center;}
+.btn-primary:hover{background:#c92f1f;}
+.btn-outline{background:transparent;color:var(--cream);border:1px solid rgba(242,232,217,.4);padding:1rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:400;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;display:block;text-align:center;}
+.btn-outline:hover{border-color:var(--gold-light);color:var(--gold-light);}
+.scroll-hint{margin-top:2.5rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;}
+.scroll-hint-line{width:1px;height:40px;background:linear-gradient(to bottom,transparent,rgba(200,146,42,.4));}
+.scroll-hint-label{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(242,232,217,.3);}
+
+/* ── UBER STRIP ── */
+.uber-strip{background:var(--brown);border-top:1px solid rgba(200,146,42,.2);border-bottom:1px solid rgba(200,146,42,.2);padding:.85rem 2rem;text-align:center;font-size:.8rem;color:rgba(242,232,217,.7);display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;}
+.uber-strip a{color:var(--gold-light);text-decoration:underline;font-weight:600;}
+
+/* ── STATS ── */
+.stats{background:var(--cream);padding:5rem 2rem;color:var(--text);}
+.stats-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:3rem;text-align:center;}
+.stat-big{font-family:'Playfair Display',serif;font-size:clamp(3.5rem,9vw,5.5rem);font-weight:900;color:var(--red);line-height:1;}
+.stat-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin:.35rem 0 .7rem;}
+.stat-desc{font-family:'Libre Baskerville',serif;font-style:italic;font-size:.88rem;color:var(--muted);line-height:1.6;}
+
+/* ── ABOUT ── */
+.about{background:var(--cream);padding:5rem 2rem 6rem;color:var(--text);}
+.about-inner{max-width:640px;margin:0 auto;}
+.sec-label{font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;}
+.about h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,7vw,3rem);line-height:1.1;color:var(--text);margin-bottom:1rem;}
+.about h2 em{font-style:italic;color:var(--gold);}
+.divider{width:52px;height:2px;background:var(--gold);margin:1.2rem 0 1.8rem;}
+.about p{font-size:.97rem;line-height:1.85;color:#4A3520;margin-bottom:1rem;}
+
+/* ── MENU ── */
+.menu-section{background:var(--dark);padding:5rem 0;}
+.menu-header{text-align:center;padding:0 2rem 3rem;}
+.menu-header .sec-label{color:var(--gold-light);}
+.menu-header h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,7vw,3rem);color:var(--cream);}
+.pickup-note-menu{font-size:.78rem;color:var(--red);margin-top:.5rem;font-weight:500;}
+.pickup-note-menu a{color:var(--gold-light);}
+
+/* Category pills */
+.cat-row{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;padding:0 1.5rem 2.5rem;}
+.cat-btn{background:transparent;border:1px solid rgba(200,146,42,.3);padding:.4rem 1.1rem;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:rgba(232,184,75,.6);transition:all .2s;font-family:'DM Sans',sans-serif;border-radius:2px;}
+.cat-btn.active,.cat-btn:hover{background:rgba(200,146,42,.15);border-color:var(--gold);color:var(--gold-light);}
+
+/* Category section headers */
+.menu-cat-header{padding:.6rem 2rem;background:rgba(200,146,42,.08);border-top:1px solid rgba(200,146,42,.15);border-bottom:1px solid rgba(200,146,42,.15);}
+.menu-cat-header span{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);font-family:'DM Sans',sans-serif;}
+
+/* ACCORDION MENU */
+.menu-list{max-width:680px;margin:0 auto;}
+.accordion{border-bottom:1px solid rgba(200,146,42,.15);}
+.accordion-header{display:flex;align-items:center;justify-content:space-between;padding:.95rem 2rem;cursor:pointer;transition:background .2s;user-select:none;}
+.accordion-header:hover{background:rgba(200,146,42,.06);}
+.acc-left{display:flex;align-items:center;gap:.85rem;}
+.acc-icon{font-size:1.3rem;}
+.acc-name{font-size:.92rem;font-weight:500;color:var(--cream);}
+.acc-sub{font-size:.68rem;color:rgba(232,184,75,.5);margin-top:.05rem;}
+.acc-right{display:flex;align-items:center;gap:.7rem;}
+.acc-count{font-size:.66rem;color:rgba(232,184,75,.4);letter-spacing:.05em;}
+.acc-arrow{color:var(--gold);font-size:.7rem;transition:transform .3s;display:inline-block;line-height:1;}
+.accordion.open .acc-arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.accordion.open .accordion-body{max-height:9999px;}
+.menu-list-item{border-top:1px solid rgba(200,146,42,.07);padding:.65rem 2rem;display:flex;align-items:center;gap:1rem;}
+.item-icon{font-size:1.1rem;flex-shrink:0;width:1.4rem;text-align:center;}
+.item-content{flex:1;min-width:0;}
+.item-name-en{font-size:.88rem;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-name-es{font-size:.68rem;color:rgba(232,184,75,.5);margin-top:.04rem;}
+.item-price{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold-light);flex-shrink:0;margin-right:.5rem;}
+.item-add-wrap{flex-shrink:0;}
+.add-btn{background:transparent;border:1px solid rgba(200,146,42,.35);color:var(--gold-light);padding:.28rem .75rem;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.add-btn:hover{background:var(--gold);color:var(--dark);border-color:var(--gold);}
+.qty-controls{display:flex;align-items:center;gap:.35rem;}
+.qty-btn{width:22px;height:22px;background:rgba(200,146,42,.15);color:var(--gold-light);border:1px solid rgba(200,146,42,.3);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.qty-btn:hover{background:var(--gold);color:var(--dark);}
+.qty-num{font-weight:700;font-size:.82rem;min-width:15px;text-align:center;color:var(--cream);}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* ── REVIEWS ── */
+.reviews-section{background:var(--cream);padding:5rem 2rem;color:var(--text);}
+.reviews-inner{max-width:680px;margin:0 auto;}
+.reviews-header{text-align:center;margin-bottom:1.5rem;}
+.reviews-header h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,6vw,2.8rem);line-height:1.1;color:var(--text);}
+.reviews-header h2 em{font-style:italic;color:var(--gold);}
+.review-counter-num{font-family:'Playfair Display',serif;font-size:clamp(3.5rem,9vw,5rem);font-weight:900;color:var(--red);line-height:1;margin:.5rem 0 .2rem;}
+.review-counter-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
+.review-counter-desc{font-family:'Libre Baskerville',serif;font-style:italic;font-size:.9rem;color:var(--muted);margin-bottom:2.5rem;}
+.review-cards{display:flex;flex-direction:column;gap:1.3rem;}
+.review-card{background:#fff;border-left:4px solid var(--gold);padding:1.6rem 1.8rem;box-shadow:0 2px 12px rgba(26,18,8,.07);}
+.review-stars{color:var(--gold);font-size:.95rem;letter-spacing:.06em;margin-bottom:.75rem;}
+.review-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:.95rem;line-height:1.75;color:var(--text);margin-bottom:.8rem;}
+.review-source{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+
+/* ── CART SIDEBAR ── */
+.cart-overlay{position:fixed;inset:0;background:rgba(28,14,4,.65);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;}
+.cart-overlay.open{opacity:1;pointer-events:all;}
+.cart-sidebar{position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);background:var(--cream);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:-6px 0 36px rgba(28,14,4,.25);}
+.cart-sidebar.open{transform:translateX(0);}
+.cart-head{background:var(--dark);color:var(--cream);padding:1.3rem 1.7rem;display:flex;align-items:center;justify-content:space-between;}
+.cart-head h2{font-family:'Playfair Display',serif;font-size:1.1rem;}
+.cart-pickup-note{background:rgba(181,40,26,.92);color:#fff;padding:.6rem 1.2rem;font-size:.74rem;line-height:1.55;text-align:center;}
+.cart-pickup-note a{color:var(--gold-light);}
+.close-btn{background:none;border:none;color:var(--cream);cursor:pointer;font-size:1.4rem;line-height:1;}
+.close-btn:hover{color:var(--gold-light);}
+.cart-items-wrap{flex:1;overflow-y:auto;padding:1.2rem 1.7rem;}
+.cart-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
+.cart-empty-icon{font-size:2.5rem;margin-bottom:.7rem;}
+.cart-empty p{font-family:'Libre Baskerville',serif;font-style:italic;font-size:.9rem;}
+.cart-item{display:flex;align-items:center;gap:.8rem;padding:.85rem 0;border-bottom:1px solid var(--border);color:var(--text);}
+.ci-info{flex:1;}
+.ci-name{font-weight:500;font-size:.9rem;margin-bottom:.12rem;color:var(--text);}
+.ci-price{color:var(--muted);font-size:.8rem;}
+.ci-controls{display:flex;align-items:center;gap:.35rem;}
+.ci-rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:.1rem;transition:color .2s;}
+.ci-rm:hover{color:var(--red);}
+.cart-foot{padding:1.2rem 1.7rem;border-top:2px solid var(--dark);}
+.cart-row{display:flex;justify-content:space-between;margin-bottom:.35rem;font-size:.85rem;color:var(--muted);}
+.cart-total-row{display:flex;justify-content:space-between;margin-bottom:1.2rem;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--text);}
+.checkout-btn{width:100%;background:var(--red);color:#fff;border:none;padding:.9rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.checkout-btn:hover{background:#c92f1f;}
+
+/* ── CHECKOUT MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(28,14,4,.8);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--cream);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:translateY(16px);transition:transform .3s;color:var(--text);}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-banner{background:var(--red);color:#fff;padding:.85rem 1.4rem;font-size:.78rem;line-height:1.6;text-align:center;}
+.modal-banner strong{color:var(--gold-light);display:block;margin-bottom:.1rem;}
+.modal-banner a{color:var(--gold-light);text-decoration:underline;}
+.modal-body{padding:1.7rem 2rem;}
+.modal h2{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.25rem;color:var(--text);}
+.modal-sub{color:var(--muted);font-size:.8rem;margin-bottom:1.6rem;font-family:'Libre Baskerville',serif;font-style:italic;}
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1px solid var(--border);background:#fff;padding:.68rem .9rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);outline:none;transition:border-color .2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.hours-note{font-size:.7rem;color:var(--muted);margin-top:.28rem;}
+.order-mini{background:#fff;border:1px solid var(--border);padding:1rem;margin-bottom:1.2rem;font-size:.83rem;}
+.order-mini h4{font-family:'Playfair Display',serif;font-size:.9rem;margin-bottom:.65rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);color:var(--text);}
+.mini-row{display:flex;justify-content:space-between;padding:.22rem 0;color:var(--text);}
+.mini-total-row{display:flex;justify-content:space-between;font-weight:700;padding-top:.45rem;margin-top:.22rem;border-top:1px solid var(--border);font-family:'Playfair Display',serif;color:var(--text);}
+#card-element{border:1px solid var(--border);padding:.75rem .9rem;background:#fff;}
+#card-errors{color:var(--red);font-size:.78rem;margin-top:.3rem;min-height:1em;}
+.modal-actions{display:flex;gap:.8rem;margin-top:1.2rem;}
+.btn-back{flex:0 0 auto;background:transparent;border:1px solid var(--border);padding:.75rem 1.3rem;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;color:var(--muted);}
+.btn-back:hover{border-color:var(--dark);color:var(--dark);}
+.btn-pay{flex:1;background:var(--red);color:#fff;border:none;padding:.75rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.btn-pay:hover{background:#c92f1f;}
+.btn-pay:disabled{opacity:.5;cursor:not-allowed;}
+
+/* SUCCESS */
+.success-inner{text-align:center;padding:2.8rem 2rem;}
+.success-icon{font-size:3rem;margin-bottom:.8rem;}
+.success-inner h2{font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:.4rem;color:var(--text);}
+.success-inner p{color:var(--muted);line-height:1.75;font-size:.9rem;}
+.btn-done{margin-top:1.6rem;background:var(--gold);color:var(--dark);border:none;padding:.8rem 1.8rem;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:background .2s;}
+.btn-done:hover{background:var(--gold-light);}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.3rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LANG TOGGLE */
+.lang-toggle{position:fixed;bottom:1.4rem;left:1.4rem;z-index:500;background:var(--dark);color:var(--gold-light);border:1px solid var(--gold);padding:.5rem 1rem;font-family:'DM Sans',sans-serif;font-size:.73rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;box-shadow:0 3px 14px rgba(28,14,4,.4);}
+.lang-toggle:hover{background:var(--gold);color:var(--dark);}
+
+/* FOOTER */
+footer{background:var(--brown);border-top:1px solid rgba(200,146,42,.15);color:rgba(242,232,217,.4);text-align:center;padding:2.2rem 2rem;font-size:.77rem;letter-spacing:.04em;line-height:2;}
+footer strong{color:var(--gold-light);}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--dark);color:var(--gold-light);padding:.8rem 1.3rem;font-size:.8rem;z-index:400;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);pointer-events:none;border-left:3px solid var(--gold);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+@media(max-width:640px){
+  .stats-inner{grid-template-columns:1fr;gap:2.5rem;}
+  .form-row{grid-template-columns:1fr;}
+  .modal-body{padding:1.3rem;}
+  .menu-list-item{gap:1rem;}
+  .item-icon{font-size:1.6rem;}
+  .loc-grid{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker">
+    <span data-es="MIAMI, FL" data-en="MIAMI, FL">MIAMI, FL</span><span class="dot">✦</span>
+    <span data-es="RECETAS AUTÉNTICAS" data-en="AUTHENTIC RECIPES">RECETAS AUTÉNTICAS</span><span class="dot">✦</span>
+    <span data-es="HECHO A MANO" data-en="HANDMADE DAILY">HECHO A MANO</span><span class="dot">✦</span>
+    <span data-es="TAMALES CUBANOS" data-en="CUBAN TAMALES">TAMALES CUBANOS</span><span class="dot">✦</span>
+    <span data-es="MIAMI, FL" data-en="MIAMI, FL">MIAMI, FL</span><span class="dot">✦</span>
+    <span data-es="RECETAS AUTÉNTICAS" data-en="AUTHENTIC RECIPES">RECETAS AUTÉNTICAS</span><span class="dot">✦</span>
+    <span data-es="HECHO A MANO" data-en="HANDMADE DAILY">HECHO A MANO</span><span class="dot">✦</span>
+    <span data-es="TAMALES CUBANOS" data-en="CUBAN TAMALES">TAMALES CUBANOS</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">El Tamalazo</div>
+  <div class="nav-right">
+    <a href="#menu" data-es="Menú" data-en="Menu">Menú</a>
+    <a href="#about" data-es="Nosotros" data-en="About">Nosotros</a>
+    <a href="#reviews" data-es="Reseñas" data-en="Reviews">Reseñas</a>
+    <button class="cart-btn" onclick="openCart()">🛒 <span data-es="Carrito" data-en="Cart">Carrito</span> <span class="cart-count" id="cartCount">0</span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-circles"><div class="hero-circle-inner"></div></div>
+  <div class="hero-eyebrow" data-es="LA COCINA CUBANA AUTÉNTICA DE MIAMI — DESDE EL PRIMER DÍA" data-en="MIAMI'S AUTHENTIC CUBAN KITCHEN — SINCE DAY ONE">LA COCINA CUBANA AUTÉNTICA DE MIAMI — DESDE EL PRIMER DÍA</div>
+  <h1 data-es-h1 data-en-h1>
+    <span data-es="El Tamalazo" data-en="El Tamalazo">El Tamalazo</span><br>
+    <em data-es="de Krome" data-en="de Krome">de Krome</em>
+  </h1>
+  <p class="hero-sub" data-es="Tamales hechos a mano. Recetas familiares. Un sabor de Cuba." data-en="Handcrafted tamales. Family recipes. A taste of Cuba.">Tamales hechos a mano. Recetas familiares. Un sabor de Cuba.</p>
+  <div class="pickup-notice">
+    <strong data-es="🛍️ PEDIDOS EN LÍNEA: SOLO PARA RECOGER" data-en="🛍️ ONLINE ORDERS: PICKUP ONLY">🛍️ PEDIDOS EN LÍNEA: SOLO PARA RECOGER</strong>
+    <span data-es="Para delivery ordena por " data-en="For delivery order through ">Para delivery ordena por </span><a href="https://www.ubereats.com" target="_blank">Uber Eats</a>.
+  </div>
+  <div class="hero-btns">
+    <a href="#menu" class="btn-primary" data-es="ORDENAR AHORA" data-en="ORDER NOW">ORDENAR AHORA</a>
+    <a href="#menu" class="btn-outline" data-es="VER EL MENÚ" data-en="SEE THE MENU">VER EL MENÚ</a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-hint-line"></div>
+    <div class="scroll-hint-label">SCROLL</div>
+  </div>
+</section>
+
+<!-- UBER STRIP -->
+<div class="uber-strip">
+  🚗 <span data-es="¿Quieres delivery? Ordena a través de " data-en="Want delivery? Order through ">¿Quieres delivery? Ordena a través de </span><a href="https://www.ubereats.com" target="_blank">Uber Eats</a><span data-es=" · Este sitio es SOLO para recoger en el local." data-en=" · This site is for IN-STORE PICKUP ONLY."> · Este sitio es SOLO para recoger en el local.</span>
+</div>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-big">2</div>
+      <div class="stat-label" data-es="Ubicaciones en Miami" data-en="Miami Locations">Ubicaciones en Miami</div>
+      <div class="stat-desc" data-es="Krome Ave y Miller Dr — sabor cubano en todo el Sur de Florida." data-en="Krome Ave and Miller Dr — Cuban flavor across South Florida.">Krome Ave y Miller Dr — sabor cubano en todo el Sur de Florida.</div>
+    </div>
+    <div>
+      <div class="stat-big">7</div>
+      <div class="stat-label" data-es="Días a la Semana" data-en="Days a Week">Días a la Semana</div>
+      <div class="stat-desc" data-es="Abiertos todos los días desde las 8 AM — desayuno, almuerzo y mucho más." data-en="Open every day from 8 AM — breakfast, lunch, and beyond.">Abiertos todos los días desde las 8 AM — desayuno, almuerzo y mucho más.</div>
+    </div>
+    <div>
+      <div class="stat-big" id="reviewCounter">839</div>
+      <div class="stat-label" data-es="Reseñas y Contando" data-en="Reviews & Counting">Reseñas y Contando</div>
+      <div class="stat-desc" data-es="Cientos de familias han hecho de El Tamalazo su lugar cubano favorito en Miami." data-en="Hundreds of families have made El Tamalazo their go-to Cuban spot in Miami.">Cientos de familias han hecho de El Tamalazo su lugar cubano favorito en Miami.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="about">
+  <div class="about-inner">
+    <div class="sec-label" data-es="NUESTRA HISTORIA" data-en="OUR STORY">NUESTRA HISTORIA</div>
+    <h2><span data-es="Comida cubana de verdad," data-en="Real Cuban food,">Comida cubana de verdad,</span><em data-es=" amor de familia de verdad." data-en=" real family love."> amor de familia de verdad.</em></h2>
+    <div class="divider"></div>
+    <p data-es="Ubicado a lo largo de Krome Avenue a minutos de Kendall, El Tamalazo lleva el corazón de Cuba a Miami — tamales auténticos elaborados con recetas de generaciones, usando solo los mejores ingredientes y las mismas técnicas traídas de la isla." data-en="Tucked along Krome Avenue just minutes from Kendall, El Tamalazo brings the heart of Cuba to Miami — authentic tamales crafted from generations-old recipes, using only the finest ingredients and the same techniques brought from the island.">Ubicado a lo largo de Krome Avenue a minutos de Kendall, El Tamalazo lleva el corazón de Cuba a Miami — tamales auténticos elaborados con recetas de generaciones, usando solo los mejores ingredientes y las mismas técnicas traídas de la isla.</p>
+    <p data-es="Desde nuestra masa hasta nuestros rellenos cocinados a fuego lento, cada bocado es un viaje. Dos ubicaciones, un compromiso inquebrantable con la autenticidad." data-en="From our masa to our slow-simmered fillings, every bite is a journey. Two locations, one unwavering commitment to authenticity.">Desde nuestra masa hasta nuestros rellenos cocinados a fuego lento, cada bocado es un viaje. Dos ubicaciones, un compromiso inquebrantable con la autenticidad.</p>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu" class="menu-section">
+  <div class="menu-header">
+    <div class="sec-label" data-es="LO QUE HACEMOS" data-en="WHAT WE MAKE">LO QUE HACEMOS</div>
+    <h2 data-es="El Menú" data-en="The Menu">El Menú</h2>
+    <p class="pickup-note-menu" data-es="⚠️ Pedidos en línea SOLO para recoger · Para delivery: <a href='https://www.ubereats.com' target='_blank'>Uber Eats</a>" data-en="⚠️ Online orders for PICKUP ONLY · For delivery: <a href='https://www.ubereats.com' target='_blank'>Uber Eats</a>">⚠️ Pedidos en línea SOLO para recoger · Para delivery: <a href="https://www.ubereats.com" target="_blank">Uber Eats</a></p>
+  </div>
+
+  <div class="menu-list" id="menuList"></div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews" class="reviews-section">
+  <div class="reviews-inner">
+    <div class="reviews-header">
+      <div class="sec-label" style="color:var(--gold);" data-es="LO QUE DICEN NUESTROS CLIENTES" data-en="WHAT OUR CUSTOMERS SAY">LO QUE DICEN NUESTROS CLIENTES</div>
+      <h2><span data-es="Directo de " data-en="Straight from ">Directo de </span><em data-es="nuestros clientes." data-en="our guests.">nuestros clientes.</em></h2>
+    </div>
+    <div class="review-counter-num" id="reviewCounterDisplay">839</div>
+    <div class="review-counter-label" data-es="RESEÑAS Y CONTANDO" data-en="REVIEWS & COUNTING">RESEÑAS Y CONTANDO</div>
+    <p class="review-counter-desc" data-es="Cientos de familias han hecho de El Tamalazo su lugar cubano favorito en Miami." data-en="Hundreds of families have made El Tamalazo their go-to Cuban spot in Miami.">Cientos de familias han hecho de El Tamalazo su lugar cubano favorito en Miami.</p>
+    <div class="review-cards" id="reviewCards"></div>
+  </div>
+</section>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-head">
+    <h2 data-es="Tu Pedido" data-en="Your Order">Tu Pedido</h2>
+    <button class="close-btn" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-pickup-note">
+    <strong data-es="🛍️ Solo para Recoger en el Local" data-en="🛍️ Pickup Only">🛍️ Solo para Recoger en el Local</strong><br>
+    <span data-es="Para delivery ordena por " data-en="For delivery order through ">Para delivery ordena por </span><a href="https://www.ubereats.com" target="_blank">Uber Eats</a>
+  </div>
+  <div class="cart-items-wrap" id="cartItems">
+    <div class="cart-empty"><div class="cart-empty-icon">🫔</div><p data-es="Tu carrito está vacío. ¡Agrega unos tamales!" data-en="Your cart is empty. Add some tamales!">Tu carrito está vacío. ¡Agrega unos tamales!</p></div>
+  </div>
+  <div class="cart-foot" id="cartFoot" style="display:none;">
+    <div class="cart-row"><span data-es="Subtotal" data-en="Subtotal">Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+    <div class="cart-row"><span data-es="Impuesto (7%)" data-en="Tax (7%)">Impuesto (7%)</span><span id="cartTax">$0.00</span></div>
+    <div class="cart-total-row"><span data-es="Total" data-en="Total">Total</span><span id="cartTotal">$0.00</span></div>
+    <button class="checkout-btn" onclick="openCheckout()" data-es="Proceder al Pago →" data-en="Proceed to Checkout →">Proceder al Pago →</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal">
+    <div class="modal-banner">
+      <strong data-es="🛍️ Este pedido es SOLO para recoger en el local" data-en="🛍️ This order is for IN-STORE PICKUP ONLY">🛍️ Este pedido es SOLO para recoger en el local</strong>
+      <span data-es="Para delivery ordena por " data-en="For delivery order through ">Para delivery ordena por </span><a href="https://www.ubereats.com" target="_blank">Uber Eats</a>
+    </div>
+    <div class="modal-body">
+      <h2 data-es="Completar Pedido" data-en="Complete Your Order">Completar Pedido</h2>
+      <p class="modal-sub" data-es="Pago seguro · Solo para recoger en el local" data-en="Secure payment · In-store pickup only">Pago seguro · Solo para recoger en el local</p>
+      <div class="order-mini" id="orderMini"></div>
+      <div class="form-row">
+        <div class="form-group"><label data-es="Nombre" data-en="First Name">Nombre</label><input type="text" id="firstName" placeholder="Maria"></div>
+        <div class="form-group"><label data-es="Apellido" data-en="Last Name">Apellido</label><input type="text" id="lastName" placeholder="Garcia"></div>
+      </div>
+      <div class="form-group"><label data-es="Correo Electrónico" data-en="Email">Correo Electrónico</label><input type="email" id="email" placeholder="maria@ejemplo.com"></div>
+      <div class="form-group"><label data-es="Teléfono" data-en="Phone">Teléfono</label><input type="tel" id="phone" placeholder="(305) 555-0000"></div>
+      <div class="form-group">
+        <label data-es="📍 Lugar de Recogida" data-en="📍 Pickup Location">📍 Lugar de Recogida</label>
+        <select id="location">
+          <option value="Krome">El Tamalazo de Krome – 12100 SW 177 Ave</option>
+          <option value="Miller">El Tamalazo de Miller – Miller Dr</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-es="⏰ Hora de Recogida" data-en="⏰ Pickup Time">⏰ Hora de Recogida</label>
+        <select id="pickupTime">
+          <option value="">-- Seleccionar / Select --</option>
+          <option>8:00 AM</option><option>8:30 AM</option><option>9:00 AM</option><option>9:30 AM</option>
+          <option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option>
+          <option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option><option>1:30 PM</option>
+          <option>2:00 PM</option><option>2:30 PM</option><option>3:00 PM</option><option>3:30 PM</option>
+          <option>4:00 PM</option><option>4:30 PM</option><option>5:00 PM</option><option>5:30 PM</option>
+          <option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option>
+          <option id="slot8pm">8:00 PM</option>
+        </select>
+        <div class="hours-note" id="hoursNote" data-es="Lun–Jue & Dom: 8AM–8PM · Vie–Sáb: 8AM–11PM" data-en="Mon–Thu & Sun: 8AM–8PM · Fri–Sat: 8AM–11PM">Lun–Jue & Dom: 8AM–8PM · Vie–Sáb: 8AM–11PM</div>
+      </div>
+      <div class="form-group"><label data-es="Instrucciones Especiales (opcional)" data-en="Special Instructions (optional)">Instrucciones Especiales (opcional)</label><textarea id="notes" rows="2" placeholder="Alguna petición especial..."></textarea></div>
+      <div class="form-group"><label data-es="Datos de la Tarjeta" data-en="Card Details">Datos de la Tarjeta</label><div id="card-element"></div><div id="card-errors"></div></div>
+      <div class="modal-actions">
+        <button class="btn-back" onclick="closeCheckout()" data-es="← Volver" data-en="← Back">← Volver</button>
+        <button class="btn-pay" id="payBtn" onclick="processPayment()">Pagar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="success-inner">
+      <div class="success-icon">🎉</div>
+      <h2 data-es="¡Pedido Confirmado!" data-en="Order Confirmed!">¡Pedido Confirmado!</h2>
+      <p id="successMsg"></p>
+      <button class="btn-done" onclick="closeSuccess()" data-es="Volver al Menú" data-en="Back to Menu">Volver al Menú</button>
+    </div>
+  </div>
+</div>
+
+<section id="locations" style="background:var(--brown);padding:4rem 2rem;border-top:1px solid rgba(200,146,42,.15);">
+  <div style="max-width:700px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:2.5rem;">
+      <div class="sec-label" data-es="ENCUÉNTRANOS" data-en="FIND US">ENCUÉNTRANOS</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,2.5rem);color:var(--cream);"><span data-es="Nuestras " data-en="Our ">Nuestras </span><em style="font-style:italic;color:var(--gold-light);" data-es="Ubicaciones" data-en="Locations">Ubicaciones</em></h2>
+    </div>
+    <div class="loc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div style="border:1px solid rgba(200,146,42,.25);padding:1.8rem;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:.8rem;">📍</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light);margin-bottom:.6rem;">El Tamalazo de Krome</div>
+        <div style="font-size:.85rem;color:rgba(242,232,217,.65);line-height:1.7;">12100 SW 177 Ave<br>Miami, FL 33196</div>
+        <a href="tel:7863028487" style="display:inline-block;margin-top:.9rem;color:var(--gold);text-decoration:none;font-size:.85rem;letter-spacing:.05em;">📞 786-302-8487</a>
+        <div style="margin-top:.6rem;"><a href="https://maps.google.com/?q=12100+SW+177+Ave+Miami+FL+33196" target="_blank" style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(232,184,75,.5);text-decoration:underline;" data-es="Ver en el mapa" data-en="View on map">Ver en el mapa</a></div>
+      </div>
+      <div style="border:1px solid rgba(200,146,42,.25);padding:1.8rem;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:.8rem;">📍</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light);margin-bottom:.6rem;">El Tamalazo de Miller</div>
+        <div style="font-size:.85rem;color:rgba(242,232,217,.65);line-height:1.7;">13911 SW 66th St<br>Miami, FL 33183</div>
+        <a href="tel:3055255780" style="display:inline-block;margin-top:.9rem;color:var(--gold);text-decoration:none;font-size:.85rem;letter-spacing:.05em;">📞 305-525-5780</a>
+        <div style="margin-top:.6rem;"><a href="https://maps.google.com/?q=13911+SW+66th+St+Miami+FL+33183" target="_blank" style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(232,184,75,.5);text-decoration:underline;" data-es="Ver en el mapa" data-en="View on map">Ver en el mapa</a></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:1.5rem;font-size:.78rem;color:rgba(242,232,217,.4);font-family:'Libre Baskerville',serif;font-style:italic;" data-es="Lun–Jue & Dom: 8AM–8PM · Vie–Sáb: 8AM–11PM" data-en="Mon–Thu & Sun: 8AM–8PM · Fri–Sat: 8AM–11PM">Lun–Jue & Dom: 8AM–8PM · Vie–Sáb: 8AM–11PM</div>
+  </div>
+</section>
+
+<footer>
+  <div><strong>El Tamalazo</strong> · Tamales Cubanos Auténticos · Miami, FL</div>
+  <div>Krome: 12100 SW 177 Ave · Tel: 786-302-8487</div>
+  <div>Lun–Jue & Dom: 8AM–8PM · Vie–Sáb: 8AM–11PM</div>
+  <div style="margin-top:.4rem;">© 2025 El Tamalazo. Todos los derechos reservados.</div>
+</footer>
+
+<button class="lang-toggle" id="langToggle" onclick="toggleLang()">🌐 English</button>
+<div class="toast" id="toast"></div>
+
+<script>
+var lang = 'es';
+var activeCat = 'all';
+var cart = {};
+var stripeInstance = null;
+var stripeElements = null;
+var cardElement = null;
+
+var EMAILJS_KEY      = 'mZONaq28WJW6S5Gsb';
+var EMAILJS_SERVICE  = 'service_otqtgk8';
+var EMAILJS_TEMPLATE = 'template_dmdlwha';
+var STRIPE_PK        = 'pk_test_51TMKsnEWyhP68yjI0ghcfGjUl2Th404HUXpmAkNR3LFHxiWsGGexvqz91yyprs14W1lCVBZHKh80bQ75Br51DjHm00IANLwAGu';
+
+// Add Fri/Sat late slots
+(function(){
+  try {
+    var d = new Date().getDay();
+    if(d===5||d===6){
+      var sel = document.getElementById('pickupTime');
+      ['8:30 PM','9:00 PM','9:30 PM','10:00 PM','10:30 PM','11:00 PM'].forEach(function(t){
+        var o = document.createElement('option'); o.textContent = t; sel.appendChild(o);
+      });
+    }
+  } catch(e){}
+})();
+
+// Init Stripe + EmailJS after page fully loads
+window.addEventListener('load', function(){
+  try { stripeInstance = Stripe(STRIPE_PK); stripeElements = stripeInstance.elements(); } catch(e){ console.warn('Stripe init failed', e); }
+  try { emailjs.init(EMAILJS_KEY); } catch(e){ console.warn('EmailJS init failed', e); }
+});
+
+// MENU DATA
+var menu = [
+  {id:1,  es:'Tamal Cubano',                  en:'Cuban Style Tamale',             icon:'🫔', des:'Masa suave con relleno de cerdo al estilo cubano clásico.',                        den:'Our signature — hand-wrapped corn masa tamale made the Cuban way.',            price:6.24,  cat:'tamales'},
+  {id:2,  es:'Tamal en Cazuela',               en:'Tamale in Casserole',            icon:'🍲', des:'Tamal cremoso servido en cazuela, al estilo tradicional cubano.',                  den:'Creamy tamale served casserole-style, traditional Cuban preparation.',          price:10.40, cat:'tamales'},
+  {id:3,  es:'Guiso de Maíz',                 en:'Cuban Corn Stew',                icon:'🌽', des:'Guiso de maíz cubano, reconfortante y lleno de sabor.',                            den:'Comforting Cuban-style corn stew, rich and deeply flavorful.',                 price:8.32,  cat:'tamales'},
+  {id:4,  es:'Tamal Cubano Frizado',           en:'Fried Cuban Tamale',             icon:'🫔', des:'Nuestro tamal cubano frito a la perfección, dorado y crujiente.',                  den:'Our Cuban tamale fried to golden, crispy perfection.',                         price:6.24,  cat:'tamales'},
+  {id:5,  es:'Pico de Gallo',                 en:'Pico de Gallo',                  icon:'🍅', des:'Salsa fresca de tomate, cebolla, cilantro y limón.',                               den:'Fresh salsa with tomato, onion, cilantro and lime.',                           price:2.08,  cat:'tamales'},
+  {id:6,  es:'Costilla al Carbón',             en:'Pork Ribs',                      icon:'🍖', des:'Costillas de cerdo a la parrilla, ahumadas y jugosas. Incluye 2 acompañantes.',    den:'Smoky grilled pork ribs, juicy and full of flavor. Includes 2 sides.',         price:26.00, cat:'carnes'},
+  {id:7,  es:'Pollo al Carbón',                en:'Roasted Chicken',                icon:'🍗', des:'Pollo asado al carbón, tierno y bien sazonado. Incluye 2 acompañantes.',           den:'Charcoal roasted chicken, tender and well seasoned. Includes 2 sides.',        price:20.80, cat:'carnes'},
+  {id:8,  es:'Fricasé de Cerdo',               en:'Pork in Creole Sauce',           icon:'🥘', des:'Trozos de cerdo en salsa criolla. Incluye 2 acompañantes.',                        den:'Pork chunks in Creole sauce. Includes 2 sides.',                               price:26.00, cat:'carnes'},
+  {id:9,  es:'Masa de Cerdo',                  en:'Fried Pork Chunks',              icon:'🥩', des:'Masa de cerdo frita, crujiente por fuera y jugosa por dentro. Incluye 2 acompañantes.', den:'Crispy fried pork chunks, juicy inside. Includes 2 sides.',             price:26.00, cat:'carnes'},
+  {id:10, es:'Bistec de Cerdo',                en:'Grilled Pork Steak',             icon:'🥩', des:'Bistec de cerdo a la plancha. Incluye 2 acompañantes.',                            den:'Grilled pork steak. Includes 2 sides.',                                        price:26.00, cat:'carnes'},
+  {id:11, es:'Bistec de Palomilla',             en:'Palomilla Steak',                icon:'🥩', des:'Bistec de palomilla clásico cubano. Incluye 2 acompañantes.',                      den:'Classic Cuban palomilla steak. Includes 2 sides.',                             price:26.00, cat:'carnes'},
+  {id:12, es:'Ternera al Vino',                en:'Beef Stewed in Red Wine',        icon:'🍷', des:'Ternera guisada en vino tinto. Incluye 2 acompañantes.',                           den:'Beef stewed in red wine. Includes 2 sides.',                                   price:29.12, cat:'carnes'},
+  {id:13, es:'Enchilado de Camarones',         en:'Shrimp Enchilada',               icon:'🦐', des:'Camarones en salsa enchilada criolla. Incluye 2 acompañantes.',                    den:'Shrimp in Creole enchilada sauce. Includes 2 sides.',                          price:26.00, cat:'carnes'},
+  {id:14, es:'Chilindrón de Carnero',          en:'Lamb in Creole Sauce',           icon:'🍖', des:'Cordero en salsa criolla especial. Incluye 2 acompañantes.',                       den:'Lamb in special Creole sauce. Includes 2 sides.',                              price:32.24, cat:'carnes'},
+  {id:15, es:'Pechuga de Pollo',               en:'Chicken Breast',                 icon:'🍗', des:'Pechuga de pollo a la plancha. Incluye 2 acompañantes.',                           den:'Grilled chicken breast. Includes 2 sides.',                                    price:20.80, cat:'carnes'},
+  {id:16, es:'Lechón Asado',                   en:'Cuban Roasted Pork',             icon:'🐷', des:'Lechón asado al estilo cubano. Incluye 2 acompañantes.',                           den:'Cuban-style roasted pork. Includes 2 sides.',                                  price:26.00, cat:'carnes'},
+  {id:17, es:'Picadera Tamalazo',              en:'Tamalazo Sampler',               icon:'🎉', des:'Tamal, Masa, Costillas, Croquetas, Papitas Fritas. La experiencia completa.',       den:'Tamal, Masa, Ribs, Croquettes, Fries. The full Tamalazo experience.',          price:45.00, cat:'carnes'},
+  {id:18, es:'Sandwich Cubano',                en:'Cuban Sandwich',                 icon:'🥪', des:'El clásico: jamón, cerdo, queso y mostaza en pan crujiente.',                      den:'The classic: ham, pork, cheese and mustard on crispy bread.',                  price:12.48, cat:'sandwiches'},
+  {id:19, es:'Pan con Lechón',                 en:'Pork Sandwich',                  icon:'🥪', des:'Pan crujiente relleno de lechón asado cubano.',                                    den:'Crispy bread filled with Cuban roasted pork.',                                 price:11.44, cat:'sandwiches'},
+  {id:20, es:'Pan con Tortilla',               en:'Omelette Sandwich',              icon:'🥪', des:'Pan con tortilla de huevo al estilo cubano.',                                      den:'Cuban-style egg omelette sandwich.',                                           price:9.36,  cat:'sandwiches'},
+  {id:21, es:'Pan con Bistec',                 en:'Steak Sandwich',                 icon:'🥪', des:'Pan crujiente con bistec a la plancha.',                                           den:'Crispy bread with grilled steak.',                                             price:11.44, cat:'sandwiches'},
+  {id:22, es:'Pan con Croqueta',               en:'Croquette Sandwich',             icon:'🥪', des:'Pan con croqueta de jamón, un favorito cubano.',                                   den:'Bread with Cuban ham croquette, a classic favorite.',                          price:9.36,  cat:'sandwiches'},
+  {id:23, es:'Tostones Rellenos de Cerdo',     en:'Pork Filled Plantains',          icon:'🍌', des:'Tostones crujientes rellenos de carne de cerdo sazonada.',                         den:'Crispy fried plantains filled with seasoned pork.',                            price:10.40, cat:'aperitivos'},
+  {id:24, es:'Tostones Rellenos de Camarones', en:'Shrimp Filled Plantains',        icon:'🦐', des:'Tostones crujientes rellenos de camarones frescos.',                               den:'Crispy fried plantains filled with fresh shrimp.',                             price:12.48, cat:'aperitivos'},
+  {id:25, es:'Croqueta de Jamón',              en:'Ham Croquette',                  icon:'🫓', des:'Croqueta cubana de jamón, dorada y cremosa.',                                      den:'Golden and creamy Cuban ham croquette.',                                       price:1.56,  cat:'aperitivos'},
+  {id:26, es:'Chicharrones',                   en:'Pork Rinds',                     icon:'🥨', des:'Chicharrones cubanos crujientes.',                                                 den:'Crispy Cuban-style pork rinds.',                                               price:12.48, cat:'aperitivos'},
+  {id:27, es:'Empellas Fritas',                en:'Fried Empellas',                 icon:'🫓', des:'Empellas fritas al estilo cubano.',                                                den:'Cuban-style fried empellas.',                                                  price:10.40, cat:'aperitivos'},
+  {id:28, es:'Empanada de Pollo',              en:'Chicken Empanada',               icon:'🥟', des:'Empanada rellena de pollo sazonado.',                                              den:'Empanada filled with seasoned chicken.',                                       price:5.20,  cat:'aperitivos'},
+  {id:29, es:'Empanada de Carne',              en:'Beef Empanada',                  icon:'🥟', des:'Empanada rellena de carne molida.',                                               den:'Empanada filled with ground beef.',                                            price:5.20,  cat:'aperitivos'},
+  {id:30, es:'Chicken Nuggets con Papitas',    en:'Chicken Nuggets with Fries',     icon:'🍟', des:'Nuggets de pollo con papitas fritas.',                                             den:'Chicken nuggets with french fries.',                                           price:10.40, cat:'aperitivos'},
+  {id:31, es:'Arroz Moro',                     en:'Black Beans & Rice',             icon:'🍚', des:'Arroz negro cubano cocinado con frijoles negros.',                                 den:'Cuban black rice cooked with black beans.',                                    price:5.20,  cat:'acompanantes'},
+  {id:32, es:'Arroz Blanco',                   en:'White Rice',                     icon:'🍚', des:'Arroz blanco esponjoso al estilo cubano.',                                         den:'Fluffy Cuban-style white rice.',                                               price:5.20,  cat:'acompanantes'},
+  {id:33, es:'Frijoles Negros',                en:'Black Beans',                    icon:'🫘', des:'Frijoles negros cubanos cocinados a fuego lento con sofrito.',                     den:'Cuban black beans slow-cooked with sofrito.',                                  price:5.20,  cat:'acompanantes'},
+  {id:34, es:'Yuca con Mojo',                  en:'Yuca with Mojo',                 icon:'🥬', des:'Yuca hervida con mojo criollo de ajo.',                                            den:'Boiled yuca with garlic Creole mojo sauce.',                                   price:5.20,  cat:'acompanantes'},
+  {id:35, es:'Papitas Fritas',                 en:'French Fries',                   icon:'🍟', des:'Papas fritas doradas y crujientes.',                                               den:'Golden crispy french fries.',                                                  price:5.20,  cat:'acompanantes'},
+  {id:36, es:'Tostones Hawaianos',             en:'Fried Plantains',                icon:'🍌', des:'Tostones de plátano verde, crujientes y sabrosos.',                                den:'Crispy fried green plantains.',                                                price:5.20,  cat:'acompanantes'},
+  {id:37, es:'Maduros',                        en:'Sweet Plantains',                icon:'🍌', des:'Plátanos maduros fritos, dulces y suaves.',                                        den:'Sweet fried ripe plantains.',                                                  price:5.20,  cat:'acompanantes'},
+  {id:38, es:'Boniato Frito',                  en:'Fried Sweet Potato',             icon:'🍠', des:'Boniato frito cubano, ligeramente dulce.',                                         den:'Cuban fried sweet potato, slightly sweet.',                                    price:5.20,  cat:'acompanantes'},
+  {id:39, es:'Ensalada de Tomate',             en:'Tomato Salad',                   icon:'🍅', des:'Ensalada fresca de tomate.',                                                       den:'Fresh tomato salad.',                                                          price:5.20,  cat:'ensaladas'},
+  {id:40, es:'Ensalada Mixta',                 en:'Mix Salad',                      icon:'🥗', des:'Ensalada mixta fresca.',                                                           den:'Fresh mixed salad.',                                                           price:7.28,  cat:'ensaladas'},
+  {id:41, es:'Ensalada Mixta Grande',          en:'Large Mix Salad',                icon:'🥗', des:'Ensalada mixta grande.',                                                           den:'Large fresh mixed salad.',                                                     price:12.48, cat:'ensaladas'},
+  {id:42, es:'Ensalada de Aguacate',           en:'Avocado Salad',                  icon:'🥑', des:'Ensalada fresca de aguacate.',                                                     den:'Fresh avocado salad.',                                                         price:5.20,  cat:'ensaladas'},
+  {id:43, es:'Huevo Frito',                    en:'Fried Eggs',                     icon:'🍳', des:'Huevos fritos al gusto.',                                                          den:'Fried eggs to order.',                                                         price:4.16,  cat:'desayunos'},
+  {id:44, es:'Huevos Revueltos',               en:'Scrambled Eggs',                 icon:'🍳', des:'Huevos revueltos esponjosos.',                                                     den:'Fluffy scrambled eggs.',                                                       price:8.32,  cat:'desayunos'},
+  {id:45, es:'Tortillas / Omelette',           en:'Omelettes',                      icon:'🍳', des:'Tortilla de huevo al estilo cubano.',                                              den:'Cuban-style egg omelette.',                                                    price:8.32,  cat:'desayunos'},
+  {id:46, es:'Flan',                           en:'Flan',                           icon:'🍮', des:'Flan cubano cremoso con caramelo.',                                                den:'Creamy Cuban flan with caramel.',                                              price:5.20,  cat:'postres'},
+  {id:47, es:'Arroz con Leche',                en:'Rice Pudding',                   icon:'🍚', des:'Arroz con leche cremoso al estilo cubano.',                                        den:'Creamy Cuban-style rice pudding.',                                             price:5.20,  cat:'postres'},
+  {id:48, es:'Buñuelos',                       en:'Buñuelos',                       icon:'🍩', des:'Buñuelos cubanos fritos con almíbar.',                                             den:'Cuban fried buñuelos with syrup.',                                             price:6.76,  cat:'postres'},
+  {id:49, es:'Dulce de Coco con Queso',        en:'Coconut Candy with Cheese',      icon:'🥥', des:'Dulce de coco con queso blanco cubano.',                                           den:'Coconut candy with Cuban white cheese.',                                       price:6.76,  cat:'postres'},
+  {id:50, es:'Casquito de Guayaba con Queso',  en:'Guava Shell with Cheese',        icon:'🍐', des:'Casquito de guayaba con queso crema.',                                             den:'Guava shell with cream cheese.',                                               price:6.76,  cat:'postres'},
+  {id:51, es:'Mermelada de Guayaba con Queso', en:'Guava Jelly with Cheese',        icon:'🍐', des:'Mermelada de guayaba con queso.',                                                  den:'Guava jelly with cheese.',                                                     price:6.76,  cat:'postres'},
+  {id:52, es:'Dulce de Fruta en Almíbar',      en:'Fruit in Syrup',                 icon:'🍑', des:'Dulce de fruta cubano en almíbar.',                                               den:'Cuban fruit candy in syrup.',                                                  price:6.76,  cat:'postres'},
+  {id:53, es:'Colada',                         en:'Colada',                         icon:'☕', des:'Café cubano colada, fuerte y dulce.',                                              den:'Cuban colada coffee, strong and sweet.',                                       price:3.12,  cat:'bebidas'},
+  {id:54, es:'Café con Leche (16oz)',           en:'Café con Leche (16oz)',          icon:'☕', des:'Café cubano con leche caliente, 16oz.',                                            den:'Cuban coffee with warm milk, 16oz.',                                           price:4.16,  cat:'bebidas'},
+  {id:55, es:'Cortadito',                      en:'Cortadito',                      icon:'☕', des:'Espresso cubano con un toque de leche vaporizada.',                                den:'Cuban espresso with a touch of steamed milk.',                                 price:3.12,  cat:'bebidas'},
+  {id:56, es:'Café Cubano en Taza',            en:'Cuban Espresso',                 icon:'☕', des:'Espresso cubano puro, pequeño y poderoso.',                                        den:'Pure Cuban espresso, small and powerful.',                                     price:2.08,  cat:'bebidas'},
+  {id:57, es:'Batido de Mango',                en:'Mango Shake',                    icon:'🥭', des:'Batido natural de mango. Jugo $4.16.',                                             den:'Natural mango milkshake. Juice $4.16.',                                        price:5.20,  cat:'bebidas'},
+  {id:58, es:'Batido de Mamey',                en:'Mamey Shake',                    icon:'🍓', des:'Batido natural de mamey. Jugo $4.16.',                                             den:'Natural mamey milkshake. Juice $4.16.',                                        price:5.20,  cat:'bebidas'},
+  {id:59, es:'Batido de Guanábana',            en:'Soursop Shake',                  icon:'🍈', des:'Batido natural de guanábana. Jugo $4.16.',                                         den:'Natural soursop milkshake. Juice $4.16.',                                      price:5.20,  cat:'bebidas'},
+  {id:60, es:'Batido de Guayaba',              en:'Guava Shake',                    icon:'🍐', des:'Batido natural de guayaba. Jugo $4.16.',                                           den:'Natural guava milkshake. Juice $4.16.',                                        price:5.20,  cat:'bebidas'},
+  {id:61, es:'Batido de Papaya',               en:'Papaya Shake',                   icon:'🍈', des:'Batido natural de papaya. Jugo $4.16.',                                            den:'Natural papaya milkshake. Juice $4.16.',                                       price:5.20,  cat:'bebidas'},
+  {id:62, es:'Batido de Fresa',                en:'Strawberry Shake',               icon:'🍓', des:'Batido natural de fresa. Jugo $4.16.',                                             den:'Natural strawberry milkshake. Juice $4.16.',                                   price:5.20,  cat:'bebidas'},
+  {id:63, es:'Batido de Piña',                 en:'Pineapple Shake',                icon:'🍍', des:'Batido natural de piña. Jugo $4.16.',                                              den:'Natural pineapple milkshake. Juice $4.16.',                                    price:5.20,  cat:'bebidas'},
+  {id:64, es:'Batido de Maracuyá',             en:'Passion Fruit Shake',            icon:'🟡', des:'Batido natural de maracuyá. Jugo $4.16.',                                          den:'Natural passion fruit milkshake. Juice $4.16.',                                price:5.20,  cat:'bebidas'},
+  {id:65, es:'Batido Mixto',                   en:'Mixed Shake',                    icon:'🥤', des:'Batido mixto de frutas tropicales.',                                               den:'Mixed tropical fruit milkshake.',                                              price:6.24,  cat:'bebidas'},
+  {id:66, es:'Malteada',                       en:'Malted Milkshake',               icon:'🥤', des:'Malteada cremosa.',                                                                den:'Creamy malted milkshake.',                                                     price:6.24,  cat:'bebidas'},
+  {id:67, es:'Batido de Trigo',                en:'Wheat Shake',                    icon:'🌾', des:'Batido de trigo nutritivo.',                                                       den:'Nutritious wheat shake.',                                                      price:6.24,  cat:'bebidas'},
+  {id:68, es:'Batido de Chocolate',            en:'Chocolate Shake',                icon:'🍫', des:'Batido cremoso de chocolate.',                                                     den:'Creamy chocolate milkshake.',                                                  price:6.24,  cat:'bebidas'},
+  {id:69, es:'Batido de Banana',               en:'Banana Shake',                   icon:'🍌', des:'Batido natural de banana.',                                                        den:'Natural banana milkshake.',                                                    price:5.20,  cat:'bebidas'},
+  {id:70, es:'Agua',                           en:'Water',                          icon:'💧', des:'Agua fría.',                                                                       den:'Cold water.',                                                                  price:2.08,  cat:'bebidas'},
+  {id:71, es:'Soda',                           en:'Soda',                           icon:'🥤', des:'Refresco frío.',                                                                   den:'Cold soda.',                                                                   price:2.08,  cat:'bebidas'}
+];
+
+// REVIEWS DATA
+var reviews = [
+  { es:'"Cada plato fue cocinado a la perfección. Así es como los cubanos han festejado en reuniones familiares por generaciones. Definitivamente volvemos."', en:'"Every dish was cooked to perfection. This is the way Cubans have been feasting in family gatherings for generations. We will definitely be returning."', source:'Google Review' },
+  { es:'"Las masitas de puerco fritas son demasiado ricas — sabor espectacular y súper tiernas. Las mejores que he comido en mi vida. Los recomiendo al 200%."', en:'"The fried pork chunks are incredibly good — spectacular flavor and super tender. The best I\'ve ever had in my life. I recommend them 200%."', source:'Cliente de Naples, FL' },
+  { es:'"Vine de visita desde Nueva York y mi familia me trajo aquí. Los tamales cubanos me transportaron de regreso a la isla. Nunca había probado algo así en los Estados Unidos."', en:'"I visited from New York and my family brought me here. The Cuban tamales transported me back to the island. I had never tasted anything like this in the United States."', source:'Google Review' },
+  { es:'"El lechón asado es una maravilla. La yuca con mojo y los frijoles negros son perfectos. Este lugar es un tesoro en Krome. ¡Cinco estrellas sin dudarlo!"', en:'"The roasted pork is a marvel. The yuca with mojo and black beans are perfect. This place is a hidden gem on Krome. Five stars without hesitation!"', source:'Yelp Review' },
+  { es:'"Llevamos a toda la familia y todos quedaron encantados. La comida es auténtica, abundante y a un precio increíble. Ya es nuestro restaurante favorito en Miami."', en:'"We brought the whole family and everyone was delighted. The food is authentic, generous, and at an incredible price. It\'s already our favorite restaurant in Miami."', source:'Cliente de Hialeah, FL' },
+  { es:'"El sandwich cubano es el mejor que he probado fuera de Cuba. El pan crujiente, el lechón jugoso y la mostaza en su punto. Me recuerda a mi infancia en La Habana."', en:'"The Cuban sandwich is the best I\'ve tried outside of Cuba. Crispy bread, juicy pork and the mustard just right. It reminds me of my childhood in Havana."', source:'Google Review' }
+];
+
+function getName(item){ return lang==='es' ? item.es : item.en; }
+function getDesc(item){ return lang==='es' ? item.des : item.den; }
+
+var catOrder = ['tamales','carnes','sandwiches','aperitivos','acompanantes','ensaladas','desayunos','postres','bebidas'];
+var catMeta = {
+  tamales:     {es:'Tamales',        en:'Tamales',      icon:'🫔'},
+  carnes:      {es:'Carnes',         en:'Meats',        icon:'🍖'},
+  sandwiches:  {es:'Sandwiches',     en:'Sandwiches',   icon:'🥪'},
+  aperitivos:  {es:'Aperitivos',     en:'Appetizers',   icon:'🥟'},
+  acompanantes:{es:'Acompañantes',   en:'Sides',        icon:'🍚'},
+  ensaladas:   {es:'Ensaladas',      en:'Salads',       icon:'🥗'},
+  desayunos:   {es:'Desayunos',      en:'Breakfast',    icon:'🍳'},
+  postres:     {es:'Postres',        en:'Desserts',     icon:'🍮'},
+  bebidas:     {es:'Bebidas',        en:'Drinks',       icon:'☕'}
+};
+
+// Track which accordions are open
+var openCats = {tamales: true}; // tamales open by default
+
+function renderMenu(){
+  var list = document.getElementById('menuList');
+  if(!list) return;
+  var html = '';
+
+  for(var c=0; c<catOrder.length; c++){
+    var cat = catOrder[c];
+    var items = menu.filter(function(i){ return i.cat===cat; });
+    if(!items.length) continue;
+    var meta = catMeta[cat];
+    var label = lang==='es' ? meta.es : meta.en;
+    var isOpen = openCats[cat] ? ' open' : '';
+    var inCartCount = 0;
+    for(var k=0;k<items.length;k++){ inCartCount += (cart[items[k].id]||0); }
+    var countBadge = inCartCount>0 ? ' <span style="background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.58rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">'+inCartCount+'</span>' : '';
+
+    html += '<div class="accordion'+isOpen+'" id="acc-'+cat+'">'
+      +'<div class="accordion-header" onclick="toggleAcc(\''+cat+'\')">'
+      +'<div class="acc-left"><span class="acc-icon">'+meta.icon+'</span>'
+      +'<div><div class="acc-name">'+label+'</div>'
+      +'<div class="acc-sub">'+items.length+' '+(lang==='es'?'platillos':'items')+'</div></div>'
+      +'</div>'
+      +'<div class="acc-right">'+countBadge+'<span class="acc-arrow">▼</span></div>'
+      +'</div>'
+      +'<div class="accordion-body">';
+
+    for(var i=0; i<items.length; i++){
+      var item = items[i];
+      var inCart = cart[item.id]||0;
+      var addHtml = inCart===0
+        ? '<button class="add-btn" onclick="addToCart('+item.id+')">'+(lang==='es'?'+ Agregar':'+ Add')+'</button>'
+        : '<div class="qty-controls"><button class="qty-btn" onclick="decCart('+item.id+')">−</button><span class="qty-num">'+inCart+'</span><button class="qty-btn" onclick="addToCart('+item.id+')">+</button></div>';
+      html += '<div class="menu-list-item">'
+        +'<div class="item-icon">'+item.icon+'</div>'
+        +'<div class="item-content">'
+        +'<div class="item-name-en">'+item.en+'</div>'
+        +'<div class="item-name-es">'+item.es+'</div>'
+        +'</div>'
+        +'<div class="item-price">$'+item.price.toFixed(2)+'</div>'
+        +'<div class="item-add-wrap">'+addHtml+'</div>'
+        +'</div>';
+    }
+    html += '</div></div>';
+  }
+  list.innerHTML = html;
+}
+
+function toggleAcc(cat){
+  openCats[cat] = !openCats[cat];
+  renderMenu();
+}
+
+function renderReviews(){
+  var container = document.getElementById('reviewCards');
+  if(!container) return;
+  var html = '';
+  for(var i=0;i<reviews.length;i++){
+    var r = reviews[i];
+    html += '<div class="review-card">'
+      +'<div class="review-stars">★★★★★</div>'
+      +'<div class="review-text">'+(lang==='es'?r.es:r.en)+'</div>'
+      +'<div class="review-source">— '+r.source+'</div>'
+      +'</div>';
+  }
+  container.innerHTML = html;
+}
+
+// CART
+function addToCart(id){
+  cart[id] = (cart[id]||0)+1;
+  updateCart(); renderMenu();
+  showToast(lang==='es'?'¡Agregado al carrito!':'Added to cart!');
+}
+function decCart(id){
+  if(cart[id]>1) cart[id]--; else delete cart[id];
+  updateCart(); renderMenu();
+}
+function delItem(id){ delete cart[id]; updateCart(); renderMenu(); }
+
+function updateCart(){
+  var total = 0;
+  var keys = Object.keys(cart);
+  for(var i=0;i<keys.length;i++) total += cart[keys[i]];
+  document.getElementById('cartCount').textContent = total;
+
+  var items = document.getElementById('cartItems');
+  var foot  = document.getElementById('cartFoot');
+  if(!items||!foot) return;
+
+  if(!total){
+    items.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🫔</div><p>'+(lang==='es'?'Tu carrito está vacío. ¡Agrega unos tamales!':'Your cart is empty. Add some tamales!')+'</p></div>';
+    foot.style.display='none'; return;
+  }
+  foot.style.display='block';
+  var sub=0, html='';
+  var cartKeys = Object.keys(cart);
+  for(var i=0;i<cartKeys.length;i++){
+    var id = cartKeys[i];
+    var item = null;
+    for(var j=0;j<menu.length;j++){ if(menu[j].id==id){ item=menu[j]; break; } }
+    if(!item) continue;
+    var line = item.price*cart[id]; sub+=line;
+    html += '<div class="cart-item">'
+      +'<div class="ci-info"><div class="ci-name">'+getName(item)+'</div><div class="ci-price">$'+item.price.toFixed(2)+' × '+cart[id]+'</div></div>'
+      +'<div class="ci-controls">'
+      +'<div class="qty-controls"><button class="qty-btn" onclick="decCart('+id+')">−</button><span class="qty-num">'+cart[id]+'</span><button class="qty-btn" onclick="addToCart('+id+')">+</button></div>'
+      +'<button class="ci-rm" onclick="delItem('+id+')">✕</button>'
+      +'</div></div>';
+  }
+  items.innerHTML = html;
+  var tax = sub*0.07;
+  document.getElementById('cartSubtotal').textContent = '$'+sub.toFixed(2);
+  document.getElementById('cartTax').textContent = '$'+tax.toFixed(2);
+  document.getElementById('cartTotal').textContent = '$'+(sub+tax).toFixed(2);
+}
+
+function openCart(){ document.getElementById('cartOverlay').classList.add('open'); document.getElementById('cartSidebar').classList.add('open'); }
+function closeCart(){ document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('cartSidebar').classList.remove('open'); }
+
+function getOrderTotal(){
+  var sub=0;
+  var keys=Object.keys(cart);
+  for(var i=0;i<keys.length;i++){
+    var item=null;
+    for(var j=0;j<menu.length;j++){ if(menu[j].id==keys[i]){ item=menu[j]; break; } }
+    if(item) sub+=item.price*cart[keys[i]];
+  }
+  return {sub:sub, tax:sub*0.07, total:sub+(sub*0.07)};
+}
+
+function buildMini(){
+  var t = getOrderTotal();
+  var keys=Object.keys(cart), rows='';
+  for(var i=0;i<keys.length;i++){
+    var item=null;
+    for(var j=0;j<menu.length;j++){ if(menu[j].id==keys[i]){ item=menu[j]; break; } }
+    if(!item) continue;
+    rows+='<div class="mini-row"><span>'+getName(item)+' ×'+cart[keys[i]]+'</span><span>$'+(item.price*cart[keys[i]]).toFixed(2)+'</span></div>';
+  }
+  return '<h4>'+(lang==='es'?'Resumen del Pedido':'Order Summary')+'</h4>'+rows
+    +'<div class="mini-row"><span style="color:var(--muted)">'+(lang==='es'?'Impuesto (7%)':'Tax (7%)')+'</span><span style="color:var(--muted)">$'+t.tax.toFixed(2)+'</span></div>'
+    +'<div class="mini-total-row"><span>Total</span><span>$'+t.total.toFixed(2)+'</span></div>';
+}
+
+function openCheckout(){
+  closeCart();
+  document.getElementById('orderMini').innerHTML = buildMini();
+  document.getElementById('checkoutModal').classList.add('open');
+  if(!cardElement && stripeInstance && stripeElements){
+    try{
+      cardElement = stripeElements.create('card',{style:{base:{fontFamily:'DM Sans,sans-serif',fontSize:'16px',color:'#2C1A06','::placeholder':{color:'#9e8a6f'}}}});
+      cardElement.mount('#card-element');
+      cardElement.on('change',function(e){ document.getElementById('card-errors').textContent=e.error?e.error.message:''; });
+    }catch(e){ console.warn('Stripe card mount failed',e); }
+  }
+  var t=getOrderTotal();
+  document.getElementById('payBtn').textContent=(lang==='es'?'Pagar ':'Pay ')+'$'+t.total.toFixed(2);
+}
+function closeCheckout(){ document.getElementById('checkoutModal').classList.remove('open'); }
+
+function processPayment(){
+  var firstName = document.getElementById('firstName').value.trim();
+  var lastName  = document.getElementById('lastName').value.trim();
+  var email     = document.getElementById('email').value.trim();
+  var phone     = document.getElementById('phone').value.trim();
+  var location  = document.getElementById('location').value;
+  var pickupTime= document.getElementById('pickupTime').value;
+  var notes     = document.getElementById('notes').value.trim();
+
+  if(!firstName||!lastName||!email){ showToast(lang==='es'?'Por favor completa nombre y correo.':'Please fill in name and email.'); return; }
+  if(!pickupTime){ showToast(lang==='es'?'Selecciona una hora de recogida.':'Please select a pickup time.'); return; }
+
+  if(!stripeInstance){ showToast('Stripe no disponible. Recarga la página.'); return; }
+
+  var payBtn = document.getElementById('payBtn');
+  payBtn.disabled=true;
+  payBtn.innerHTML='<span class="spinner"></span>'+(lang==='es'?'Procesando…':'Processing…');
+
+  stripeInstance.createPaymentMethod({
+    type:'card', card:cardElement,
+    billing_details:{name:firstName+' '+lastName, email:email, phone:phone}
+  }).then(function(result){
+    if(result.error){
+      document.getElementById('card-errors').textContent=result.error.message;
+      payBtn.disabled=false;
+      var t=getOrderTotal(); payBtn.textContent=(lang==='es'?'Pagar ':'Pay ')+'$'+t.total.toFixed(2);
+      return;
+    }
+    var orderLines='';
+    var keys=Object.keys(cart);
+    for(var i=0;i<keys.length;i++){
+      var item=null;
+      for(var j=0;j<menu.length;j++){ if(menu[j].id==keys[i]){ item=menu[j]; break; } }
+      if(item) orderLines+=item.es+' x'+cart[keys[i]]+' — $'+(item.price*cart[keys[i]]).toFixed(2)+'\n';
+    }
+    var t=getOrderTotal();
+    try{
+      emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE,{
+        customer_name:  firstName+' '+lastName,
+        customer_phone: phone||'N/A',
+        location:       'El Tamalazo de '+location,
+        pickup_time:    pickupTime,
+        order_items:    orderLines,
+        total:          '$'+t.total.toFixed(2),
+        notes:          notes||'Ninguna'
+      });
+    }catch(e){ console.warn('EmailJS error',e); }
+
+    cart={}; updateCart(); renderMenu(); closeCheckout();
+    document.getElementById('successMsg').textContent = lang==='es'
+      ? '¡Gracias, '+firstName+'! Tu pedido fue confirmado. Revisa tu correo en '+email+'. Estará listo a las '+pickupTime+' en El Tamalazo de '+location+'.'
+      : 'Thank you, '+firstName+'! Your order is confirmed. Check your email at '+email+'. Ready at '+pickupTime+' at El Tamalazo de '+location+'.';
+    document.getElementById('successModal').classList.add('open');
+  }).catch(function(err){
+    console.error(err);
+    document.getElementById('card-errors').textContent=lang==='es'?'Algo salió mal. Intenta de nuevo.':'Something went wrong. Please try again.';
+    payBtn.disabled=false;
+    var t=getOrderTotal(); payBtn.textContent=(lang==='es'?'Pagar ':'Pay ')+'$'+t.total.toFixed(2);
+  });
+}
+function closeSuccess(){ document.getElementById('successModal').classList.remove('open'); }
+
+// LANGUAGE
+function toggleLang(){
+  lang = lang==='es'?'en':'es';
+  document.getElementById('langToggle').textContent = lang==='es'?'🌐 English':'🌐 Español';
+  var els = document.querySelectorAll('[data-es]');
+  for(var i=0;i<els.length;i++){
+    var el=els[i];
+    if(el.id==='reviewCounter'||el.id==='reviewCounterDisplay') continue;
+    var val=el.getAttribute(lang==='es'?'data-es':'data-en');
+    if(val) el.innerHTML=val;
+  }
+  renderMenu();
+  updateCart();
+  renderReviews();
+}
+
+// TOAST
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); },2500);
+}
+
+// INIT
+renderMenu();
+renderReviews();
+</script>
+</body>
+</html>
